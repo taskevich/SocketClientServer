@@ -50,7 +50,7 @@ public:
         return true;
     }
 
-    void ReceiveAndPrint() {
+    void Receive() {
         while (true) {
             if (clientSocket != -1) {
                 char buffer[BUFFER_SIZE];
@@ -108,12 +108,12 @@ int main() {
     Client client(serverIP, serverPort);
 
     if (!client.Connect()) {
-        std::cout << "Не удалось подключиться к серверу. Повторная попытка подключения будет выполнена каждые " << RECONNECT_INTERVAL << " секунд." << std::endl;
+        std::cout << "Не удалось подключиться к серверу. Повторная попытка подключения будет выполнена через " << RECONNECT_INTERVAL << " секунд." << std::endl;
         client.Reconnect();
     }
 
     while (true) {
-        client.ReceiveAndPrint();
+        client.Receive();
     }
 
     client.Disconnect();

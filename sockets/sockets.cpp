@@ -18,7 +18,7 @@
 constexpr int MAX_CLIENTS = 10;
 constexpr int BUFFER_SIZE = 1024;
 
-// Структура, представляющая клиента
+// Структура клиента
 struct Client {
     int id;
     int socket;
@@ -28,7 +28,7 @@ struct Client {
         : id(id), socket(socket), address(address) {}
 };
 
-// Класс сервера
+// Сервера
 class Server {
 public:
     Server(int port) : port(port) {
@@ -133,9 +133,6 @@ private:
                 std::cout << "Клиент отключен. ID: " << clientId << std::endl;
                 break;
             }
-
-            std::string message(buffer, bytesRead);
-            std::cout << "Получено сообщение от клиента " << clientId << ": " << message << std::endl;
         }
 
         std::lock_guard<std::mutex> lock(clientsMutex);
