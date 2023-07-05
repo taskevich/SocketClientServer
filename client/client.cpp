@@ -3,15 +3,9 @@
 #include <thread>
 #include <chrono>
 #include <Ws2tcpip.h>
-
-#ifdef _WIN32
 #include <winsock2.h>
+
 #pragma comment(lib, "ws2_32.lib")
-#else
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#endif
 
 constexpr int BUFFER_SIZE = 1024;
 constexpr int RECONNECT_INTERVAL = 10; // Период повторного подключения (в секундах)
@@ -22,13 +16,11 @@ public:
         : serverIP(serverIP), serverPort(serverPort), clientSocket(-1) {}
 
     bool Connect() {
-#ifdef _WIN32
         WSADATA wsData;
         if (WSAStartup(MAKEWORD(2, 2), &wsData) != 0) {
             std::cout << "Не удалось инициализировать библиотеку Winsock." << std::endl;
             return false;
         }
-#endif
 
         clientSocket = socket(AF_INET, SOCK_STREAM, 0);
         if (clientSocket == -1) {
@@ -86,12 +78,8 @@ public:
 
     void Disconnect() {
         if (clientSocket != -1) {
-#ifdef _WIN32
             closesocket(clientSocket);
             WSACleanup();
-#else
-            close(clientSocket);
-#endif
         }
     }
 
