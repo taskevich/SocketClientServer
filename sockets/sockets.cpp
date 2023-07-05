@@ -5,15 +5,9 @@
 #include <condition_variable>
 #include <string>
 #include <cstring>
-
-#ifdef _WIN32
 #include <winsock2.h>
+
 #pragma comment(lib, "ws2_32.lib")
-#else
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#endif
 
 constexpr int MAX_CLIENTS = 10;
 constexpr int BUFFER_SIZE = 1024;
@@ -28,7 +22,7 @@ struct Client {
         : id(id), socket(socket), address(address) {}
 };
 
-// Сервера
+// Сервер
 class Server {
 public:
     Server(int port) : port(port) {
@@ -59,13 +53,11 @@ private:
     std::string command;
 
     bool Initialize() {
-#ifdef _WIN32
         WSADATA wsData;
         if (WSAStartup(MAKEWORD(2, 2), &wsData) != 0) {
             std::cout << "Не удалось инициализировать библиотеку Winsock." << std::endl;
             return false;
         }
-#endif
 
         serverSocket = socket(AF_INET, SOCK_STREAM, 0);
         if (serverSocket == -1) {
@@ -94,12 +86,8 @@ private:
     }
 
     void Cleanup() {
-#ifdef _WIN32
         closesocket(serverSocket);
         WSACleanup();
-#else
-        close(serverSocket);
-#endif
     }
 
     void AcceptClients() {
