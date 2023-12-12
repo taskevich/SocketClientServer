@@ -18,13 +18,13 @@ public:
     bool Connect() {
         WSADATA wsData;
         if (WSAStartup(MAKEWORD(2, 2), &wsData) != 0) {
-            std::cout << "Не удалось инициализировать библиотеку Winsock." << std::endl;
+            std::cout << "Error initializing WinSock." << std::endl;
             return false;
         }
 
         clientSocket = socket(AF_INET, SOCK_STREAM, 0);
         if (clientSocket == -1) {
-            std::cout << "Не удалось создать сокет." << std::endl;
+            std::cout << "Error creating socket." << std::endl;
             return false;
         }
 
@@ -34,11 +34,11 @@ public:
         inet_pton(AF_INET, serverIP.c_str(), &(serverAddress.sin_addr));
 
         if (connect(clientSocket, (sockaddr*)&serverAddress, sizeof(serverAddress)) == -1) {
-            std::cout << "Не удалось подключиться к серверу." << std::endl;
+            std::cout << "Error connecting to server." << std::endl;
             return false;
         }
 
-        std::cout << "Успешное подключение к серверу." << std::endl;
+        std::cout << "Connection to the server was successfull." << std::endl;
         return true;
     }
 
@@ -49,17 +49,17 @@ public:
                 memset(buffer, 0, sizeof(buffer));
                 int bytesRead = recv(clientSocket, buffer, BUFFER_SIZE - 1, 0);
                 if (bytesRead > 0) {
-                    std::cout << "Получено сообщение от сервера: " << buffer << std::endl;
+                    std::cout << "New message from server: " << buffer << std::endl;
                 }
                 else {
-                    std::cout << "Соединение с сервером разорвано. Повторная попытка подключения будет выполнена через "
-                        << RECONNECT_INTERVAL << " секунд." << std::endl;
+                    std::cout << "Connection was interrut. Reconnect via "
+                        << RECONNECT_INTERVAL << " seconds." << std::endl;
                     Reconnect();
                 }
             }
             else {
-                std::cout << "Не удалось установить соединение с сервером. Повторная попытка подключения будет выполнена через "
-                    << RECONNECT_INTERVAL << " секунд." << std::endl;
+                std::cout << "Connection error. Reconnect via "
+                    << RECONNECT_INTERVAL << " seconds." << std::endl;
                 Reconnect();
             }
         }
@@ -96,7 +96,7 @@ int main() {
     Client client(serverIP, serverPort);
 
     if (!client.Connect()) {
-        std::cout << "Не удалось подключиться к серверу. Повторная попытка подключения будет выполнена через " << RECONNECT_INTERVAL << " секунд." << std::endl;
+        std::cout << "Error connection to server. Reconnect via " << RECONNECT_INTERVAL << " seconds." << std::endl;
         client.Reconnect();
     }
 

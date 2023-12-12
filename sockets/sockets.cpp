@@ -31,7 +31,7 @@ public:
 
     void Start() {
         if (!Initialize()) {
-            std::cout << "Ошибка инициализации сервера." << std::endl;
+            std::cout << "Error server initialization." << std::endl;
             return;
         }
 
@@ -71,16 +71,16 @@ private:
         serverAddress.sin_port = htons(port);
 
         if (bind(serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) == -1) {
-            std::cout << "Не удалось привязать сокет к адресу и порту." << std::endl;
+            std::cout << "Error to link socket to host." << std::endl;
             return false;
         }
 
         if (listen(serverSocket, MAX_CLIENTS) == -1) {
-            std::cout << "Не удалось установить сокет в режим прослушивания." << std::endl;
+            std::cout << "Error to setup the socket on listening." << std::endl;
             return false;
         }
 
-        std::cout << "Сервер запущен. Ожидание клиентов..." << std::endl;
+        std::cout << "Server started. Waiting for clients..." << std::endl;
 
         return true;
     }
@@ -95,7 +95,7 @@ private:
             sockaddr_in clientAddress{};
             int clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddress, nullptr);
             if (clientSocket == -1) {
-                std::cout << "Ошибка при принятии клиента." << std::endl;
+                std::cout << "Error client connection." << std::endl;
                 continue;
             }
 
@@ -107,7 +107,7 @@ private:
             std::thread clientThread(&Server::HandleClient, this, clientId);
             clientThread.detach();
 
-            std::cout << "Подключен новый клиент. ID: " << clientId << std::endl;
+            std::cout << "New client. ID: " << clientId << std::endl;
         }
     }
 
@@ -118,7 +118,7 @@ private:
         while (true) {
             int bytesRead = recv(client.socket, buffer, BUFFER_SIZE, 0);
             if (bytesRead <= 0) {
-                std::cout << "Клиент отключен. ID: " << clientId << std::endl;
+                std::cout << "Client disconnected. ID: " << clientId << std::endl;
                 break;
             }
         }
@@ -144,11 +144,11 @@ private:
                     send(client.socket, command.c_str(), command.length(), 0);
                 }
                 else {
-                    std::cout << "Неверный идентификатор клиента." << std::endl;
+                    std::cout << "Incorrect inditifier of client." << std::endl;
                 }
             }
             else {
-                std::cout << "Некорректная команда." << std::endl;
+                std::cout << "Incorrect command." << std::endl;
             }
         }
     }
